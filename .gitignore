@@ -4,4 +4,4 @@
 /clover.xml
 /infection.log
 /.php_cs.cache
-/.phpunit.result.cache
+/.phpunit.cache
