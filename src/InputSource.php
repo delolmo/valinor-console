@@ -6,6 +6,7 @@ namespace DelOlmo\Valinor\Mapper\Source;
 
 use ArrayObject;
 use IteratorAggregate;
+use Override;
 use Symfony\Component\Console\Input\InputInterface as Input;
 use Traversable;
 
@@ -15,7 +16,7 @@ use function array_merge;
 final class InputSource implements IteratorAggregate
 {
     public function __construct(
-        private Input $input,
+        private readonly Input $input,
     ) {
     }
 
@@ -25,9 +26,10 @@ final class InputSource implements IteratorAggregate
     }
 
     /** @return Traversable<string, mixed> */
+    #[Override]
     public function getIterator(): Traversable
     {
-        $input = $this->getInput();
+        $input = $this->input;
 
         $array = array_merge($input->getOptions(), $input->getArguments());
 

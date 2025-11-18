@@ -15,9 +15,9 @@ final class InputSourceTest extends TestCase
     {
         $input = $this->createMock(InputInterface::class);
 
-        $source = new InputSource($input);
+        $inputSource = new InputSource($input);
 
-        Assert::assertSame($input, $source->getInput());
+        Assert::assertSame($input, $inputSource->getInput());
     }
 
     public function testGetIterator(): void
