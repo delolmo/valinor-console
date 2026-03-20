@@ -13,10 +13,10 @@ use Traversable;
 use function array_merge;
 
 /** @implements IteratorAggregate<string, mixed> */
-final class InputSource implements IteratorAggregate
+final readonly class InputSource implements IteratorAggregate
 {
     public function __construct(
-        private readonly Input $input,
+        private Input $input,
     ) {
     }
 

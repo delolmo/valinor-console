@@ -9,12 +9,9 @@
         }
     ],
     "require": {
-        "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
-        "cuyz/valinor": "^2.1",
-        "symfony/console": "^6.4 || ^7.0",
-        "symfony/polyfill-php82": "^1.27",
-        "symfony/polyfill-php83": "^1.27",
-        "symfony/polyfill-php84": "^1.27"
+        "php": ">=8.4",
+        "cuyz/valinor": "^2.3",
+        "symfony/console": "^8.0"
     },
     "require-dev": {
         "ext-xdebug": "*",
@@ -22,7 +19,7 @@
         "captainhook/plugin-composer": "^5.3",
         "doctrine/coding-standard": "^13.0",
         "ergebnis/composer-normalize": "^2.47",
-        "infection/infection": "^0.27 || ^0.28",
+        "infection/infection": "^0.32",
         "php-parallel-lint/php-parallel-lint": "^1.4",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-deprecation-rules": "^2.0",
