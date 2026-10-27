@@ -2,49 +2,88 @@
 
 declare(strict_types=1);
 
-namespace DelOlmo\Valinor\Mapper\Source;
+namespace DelOlmo\Valinor\Mapper\Source\Tests;
 
-use ArrayObject;
+use CuyZ\Valinor\Mapper\Source\Source;
+use CuyZ\Valinor\MapperBuilder;
+use DelOlmo\Valinor\Mapper\Source\InputSource;
+use DelOlmo\Valinor\Mapper\Source\Tests\Fixtures\GreetCommandInput;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputOption;
 
+use function iterator_to_array;
+
+#[CoversClass(InputSource::class)]
 final class InputSourceTest extends TestCase
 {
-    public function testGetInput(): void
+    #[TestDox('getInput() returns the input the source was built from')]
+    public function testGetInputReturnsTheWrappedInput(): void
     {
-        $input = $this->createMock(InputInterface::class);
+        $input = new ArrayInput([]);
 
         $inputSource = new InputSource($input);
 
         Assert::assertSame($input, $inputSource->getInput());
     }
 
-    public function testGetIterator(): void
+    /**
+     * @param array<string, mixed> $parameters
+     * @param array<string, mixed> $expected
+     */
+    #[DataProvider('inputProvider')]
+    #[TestDox('getIterator() yields $_dataName')]
+    public function testGetIteratorMergesOptionsAndArguments(array $parameters, array $expected): void
     {
-        $options   = ['foo' => 'bar'];
-        $arguments = ['foo' => 'baz'];
+        $definition = new InputDefinition([
+            new InputArgument('name', InputArgument::OPTIONAL),
+            new InputOption('name', mode: InputOption::VALUE_REQUIRED),
+            new InputOption('times', mode: InputOption::VALUE_REQUIRED),
+        ]);
 
-        $inputx1 = $this->createMock(InputInterface::class);
-        $inputx1->method('getOptions')->willReturn($options);
-        $inputx1->method('getArguments')->willReturn($arguments);
+        $input = new ArrayInput($parameters, $definition);
 
-        $sourcex1   = new InputSource($inputx1);
-        $expectedx1 = new ArrayObject(['foo' => 'baz']);
-        Assert::assertEquals($expectedx1, $sourcex1->getIterator());
+        $values = iterator_to_array(new InputSource($input));
 
-        $inputx2 = $this->createMock(InputInterface::class);
-        $inputx2->method('getOptions')->willReturn($options);
+        Assert::assertSame($expected, $values);
+    }
 
-        $sourcex2   = new InputSource($inputx2);
-        $expectedx2 = new ArrayObject(['foo' => 'bar']);
-        Assert::assertEquals($expectedx2, $sourcex2->getIterator());
+    /** @return iterable<string, array{array<string, mixed>, array<string, mixed>}> */
+    public static function inputProvider(): iterable
+    {
+        yield 'the argument over an option of the same name' => [
+            ['name' => 'argument', '--name' => 'option'],
+            ['name' => 'argument', 'times' => null],
+        ];
 
-        $inputx3 = $this->createMock(InputInterface::class);
-        $inputx3->method('getArguments')->willReturn($arguments);
+        yield 'the option when the argument is not given' => [
+            ['--name' => 'option', '--times' => '3'],
+            ['name' => null, 'times' => '3'],
+        ];
+    }
 
-        $sourcex3   = new InputSource($inputx3);
-        $expectedx3 = new ArrayObject(['foo' => 'baz']);
-        Assert::assertEquals($expectedx3, $sourcex3->getIterator());
+    #[TestDox('A Valinor mapper maps the options and arguments onto an object')]
+    public function testValinorMapsTheSource(): void
+    {
+        $definition = new InputDefinition([
+            new InputArgument('name', InputArgument::REQUIRED),
+            new InputOption('times', mode: InputOption::VALUE_REQUIRED, default: '1'),
+            new InputOption('shout', mode: InputOption::VALUE_NONE),
+        ]);
+
+        $input = new ArrayInput(['name' => 'Ada', '--times' => '2', '--shout' => true], $definition);
+
+        $greetCommandInput = new MapperBuilder()
+            ->allowScalarValueCasting()
+            ->mapper()
+            ->map(GreetCommandInput::class, Source::iterable(new InputSource($input)));
+
+        Assert::assertEquals(new GreetCommandInput(name: 'Ada', times: 2, shout: true), $greetCommandInput);
     }
 }
