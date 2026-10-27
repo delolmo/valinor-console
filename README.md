@@ -7,7 +7,7 @@ Use the `InputInterface` of [symfony/console](https://github.com/symfony/console
 
 ## Requirements
 
-* PHP ^8.4.27
+* PHP ~8.4.27 || ^8.5.12
 * cuyz/valinor ^2.6
 * symfony/console ^8.0
 
