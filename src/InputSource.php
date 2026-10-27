@@ -12,7 +12,12 @@ use Traversable;
 
 use function array_merge;
 
-/** @implements IteratorAggregate<string, mixed> */
+/**
+ * A Valinor source holding a console input's options and arguments. On a
+ * shared name, the argument wins over the option.
+ *
+ * @implements IteratorAggregate<string, mixed>
+ */
 final readonly class InputSource implements IteratorAggregate
 {
     public function __construct(
