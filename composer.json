@@ -1,12 +1,17 @@
 {
     "name": "delolmo/valinor-console",
-    "description": "Use symfony/console input as a Valinor source",
+    "description": "Map symfony/console arguments and options to typed PHP objects with cuyz/valinor.",
     "license": "MIT",
     "type": "library",
     "keywords": [
         "valinor",
+        "symfony",
+        "symfony-console",
         "console",
+        "cli",
         "mapper",
+        "object-mapper",
+        "dto",
         "source"
     ],
     "authors": [
