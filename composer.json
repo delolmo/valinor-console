@@ -27,13 +27,13 @@
     "require": {
         "php": "~8.4.27 || ^8.5.12",
         "cuyz/valinor": "^2.6",
-        "symfony/console": "^8.0"
+        "symfony/console": "^8.1"
     },
     "require-dev": {
         "captainhook/captainhook-phar": "^5.29",
         "captainhook/plugin-composer": "^5.3",
         "doctrine/coding-standard": "^14.0",
-        "ergebnis/composer-normalize": "^2.54",
+        "ergebnis/composer-normalize": "^2.56",
         "infection/infection": "^0.35",
         "php-parallel-lint/php-parallel-lint": "^1.4",
         "phpstan/phpstan": "^2.3",
