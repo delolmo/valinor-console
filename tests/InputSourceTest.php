@@ -8,11 +8,13 @@ use CuyZ\Valinor\Mapper\Source\Source;
 use CuyZ\Valinor\MapperBuilder;
 use DelOlmo\Valinor\Mapper\Source\InputSource;
 use DelOlmo\Valinor\Mapper\Source\Tests\Fixtures\GreetCommandInput;
+use IteratorIterator;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -66,6 +68,27 @@ final class InputSourceTest extends TestCase
             ['--name' => 'option', '--times' => '3'],
             ['name' => null, 'times' => '3'],
         ];
+    }
+
+    #[TestDox('getIterator() yields string keys when Symfony returns int keys for numeric names')]
+    public function testGetIteratorYieldsStringKeysForNumericNames(): void
+    {
+        $definition = new InputDefinition([
+            new InputArgument('1', InputArgument::OPTIONAL),
+            new InputOption('2', mode: InputOption::VALUE_REQUIRED),
+        ]);
+
+        $input = new ArgvInput(['app', 'argument', '--2=option'], $definition);
+
+        $names    = [];
+        $iterator = new IteratorIterator(new InputSource($input));
+
+        for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
+            $names[] = $iterator->key();
+        }
+
+        // Symfony renumbers numeric names (array_merge in Input::getOptions() and getArguments()).
+        Assert::assertSame(['0', '1'], $names);
     }
 
     #[TestDox('A Valinor mapper maps the options and arguments onto an object')]

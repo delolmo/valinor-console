@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+### Changed
+
+- Require `symfony/console` 8.1 or later.
+
+### Fixed
+
+- `InputSource` yields string keys as its `IteratorAggregate<string, mixed>` type promises, also for numeric option or argument names, which PHP stores as int keys. An argument now also wins over an option whose numeric name collides with it, where it used to be appended under a new index.
+
 ## [2.6.2] - 2026-10-29
 
 ### Changed
